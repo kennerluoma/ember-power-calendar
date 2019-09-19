@@ -6,18 +6,21 @@ import { assert } from '@ember/debug';
 import layout from '../../templates/components/power-calendar/days';
 import {
   add,
-  startOf,
   endOf,
+  endOfWeek,
+  formatDate,
   getWeekdays,
   getWeekdaysMin,
   getWeekdaysShort,
-  formatDate,
-  isoWeekday,
-  isBefore,
   isAfter,
+  isBefore,
   isSame,
+  localeStartOfWeek,
+  normalizeCalendarDay,
+  normalizeDate,
+  startOf,
+  startOfWeek,
   withLocale,
-  normalizeCalendarDay
 } from 'ember-power-calendar-utils';
 
 const WEEK_DAYS = [
@@ -60,9 +63,7 @@ export default Component.extend({
     if (forcedStartOfWeek) {
       return parseInt(forcedStartOfWeek, 10);
     }
-    let now = this.get('powerCalendarService').getDate();
-    let dayAbbr = withLocale(this.get('calendar.locale'), () => formatDate(startOf(now, 'week'), 'ddd'));
-    return this.get('weekdaysShort').indexOf(dayAbbr);
+    return localeStartOfWeek(this.get('calendar.locale'));
   }),
 
   weekdaysNames: computed('localeStartOfWeek', 'weekdayFormat', 'calendar.locale', function() {
@@ -75,8 +76,8 @@ export default Component.extend({
   days: computed('calendar', 'focusedId', 'localeStartOfWeek', 'minDate', 'maxDate', 'disabledDates.[]', 'maxLength', function() {
     let today = this.get('powerCalendarService').getDate();
     let calendar = this.get('calendar');
-    let lastDay = this.lastDay(calendar);
-    let day = this.firstDay(calendar);
+    let lastDay = this.lastDay();
+    let day = this.firstDay();
     let days = [];
     while (isBefore(day, lastDay)) {
       days.push(this.buildDay(day, today, calendar));
@@ -103,6 +104,32 @@ export default Component.extend({
     }
     return weeks;
   }),
+
+  center: null,
+
+  currentCenter: computed('center', 'calendar.center', function() {
+    let center = this.get('center');
+    if (!center) {
+      center = this.get('selected') || this.get('calendar.center');
+    }
+    return normalizeDate(center);
+  }),
+
+  // Lifecycle hooks
+  init() {
+    this._super(...arguments);
+    this._handleDayClick = this._handleDayClick.bind(this);
+  },
+
+  didInsertElement() {
+    this._super(...arguments);
+    this.element.addEventListener('click', this._handleDayClick);
+  },
+
+  willRemoveElement() {
+    this._super(...arguments);
+    this.element.removeEventListener('click', this._handleDayClick);
+  },
 
   // Actions
   actions: {
@@ -178,7 +205,7 @@ export default Component.extend({
       date: new Date(date),
       isDisabled: this.dayIsDisabled(date),
       isFocused: this.get('focusedId') === id,
-      isCurrentMonth: date.getMonth() === calendar.center.getMonth(),
+      isCurrentMonth: date.getMonth() === this.get('currentCenter').getMonth(),
       isToday: isSame(date, today, 'day'),
       isSelected: this.dayIsSelected(date, calendar)
     });
@@ -193,7 +220,7 @@ export default Component.extend({
   },
 
   dayIsDisabled(date) {
-    let isDisabled = !this.get('onSelect');
+    let isDisabled = !this.get('calendar.actions.select');
     if (isDisabled) {
       return true;
     }
@@ -225,24 +252,16 @@ export default Component.extend({
     return false;
   },
 
-  firstDay(calendar) {
-    let firstDay = startOf(calendar.center, 'month');
-    let localeStartOfWeek = this.get('localeStartOfWeek');
-    while ((isoWeekday(firstDay) % 7) !== localeStartOfWeek) {
-      firstDay = add(firstDay, -1, "day");
-    }
-    return firstDay;
+  firstDay() {
+    let firstDay = startOf(this.get('currentCenter'), 'month');
+    return startOfWeek(firstDay, this.get('localeStartOfWeek'));
   },
 
-  lastDay(calendar) {
+  lastDay() {
     let localeStartOfWeek = this.get('localeStartOfWeek');
-    assert("The center of the calendar is an invalid date.", !isNaN(calendar.center.getTime()));
-    let lastDay = endOf(calendar.center, 'month')
-    let localeEndOfWeek = (localeStartOfWeek + 6) % 7;
-    while (isoWeekday(lastDay) % 7 !== localeEndOfWeek) {
-      lastDay = add(lastDay, 1, 'day');
-    }
-    return lastDay;
+    assert("The center of the calendar is an invalid date.", !isNaN(this.get('currentCenter').getTime()));
+    let lastDay = endOf(this.get('currentCenter'), 'month')
+    return endOfWeek(lastDay, localeStartOfWeek);
   },
 
   _updateFocused(id) {
@@ -253,6 +272,20 @@ export default Component.extend({
     let dayElement = this.element.querySelector(`[data-date="${id}"]`);
     if (dayElement) {
       dayElement.focus();
+    }
+  },
+
+  _handleDayClick(e) {
+    let dayEl = e.target.closest('[data-date]');
+    if (dayEl) {
+      let dateStr = dayEl.dataset.date;
+      let day = this.get('days').find(d => d.id === dateStr);
+      if (day) {
+        let calendar = this.get('calendar');
+        if (calendar.actions.select) {
+          calendar.actions.select(day, calendar, e);
+        }
+      }
     }
   }
 });

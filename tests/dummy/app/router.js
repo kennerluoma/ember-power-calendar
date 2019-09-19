@@ -30,6 +30,7 @@ Router.map(function() {
     this.route('cookbook', function() {
       this.route('datepicker');
       this.route('nav-select');
+      this.route('multiple-months');
     });
 
     this.route('addons', function() {
@@ -39,7 +40,6 @@ Router.map(function() {
     this.route('support-the-project');
   });
   this.route('helpers-testing');
-  this.route('legacy-demo');
 });
 
 export default Router;

@@ -1,5 +1,73 @@
 ## Master
 
+## 0.13.3
+- [CHORE] Allow ember-concurrency 1.0
+
+## 0.13.2
+- [BUGFIX] Make use of `$nav-button-color--focus`, which before wasn't really being used as intended. This makes it customizable.
+
+## 0.13.1
+- [BUGFIX] Fix bug detecting keyword in package.json
+
+## 0.13.0
+- [ENHANCEMENT] Detect EPC-adapters (like ember-power-calendar-luxon and ember-power-calendar-moment)
+  not using a whitelist, but looking for the keyword `ember-power-calendar-adapter` in their package.json
+
+## 0.12.0
+- [ENHANCEMENT] Update ember-concurrency to 0.9 for better octane support
+
+## 0.11.0
+Unsure
+
+## 0.10.3
+- [ENHANCEMENT] Allow range calendar's `actions.select` to take an range. It used to only
+  allow a single day from which it constructed a the range. This hasn't change, but now if it receives
+  a range it it will use that range it will use as is.
+
+## 0.10.2
+- [ENHANCEMENT] Allow pass a `@unit` and `@format` to the `calendar.nav` component, which used to be
+  hardcoded values (`'month'` and `'MMMM YYYY'` respetively).
+
+## 0.10.1
+- [ENHANCEMENT] Allow multiple calendar's `actions.select` to take an array of days. It used to only
+  allow a single day from which it constructed a new list. This hasn't change, but now if it receives
+  a list it it will use that list as the final set of values.
+
+## 0.10.0
+- [CHORE] Minimum version of `ember-power-calendar-luxon` has to be 0.1.5 and of `ember-power-calendar-moment` 0.1.4.
+  Some utility functions have been extracted there.
+
+## 0.9.7
+- [ENHANCEMENT] `{{#cal.days}}` yields the array of weeks as third argument.
+
+## 0.9.6
+- [ENHANCEMENT] Allow `{{cal.days}}` component to receive a `dayClass` property that can be either a string or a function that takes `(day, calendar, weeks)` and returns a string. That string is added as a class to days.
+
+## 0.9.5
+- [ENHANCEMENT] Add `type` to public API. Possible values: "single" | "multiple" | "range"
+- [DOCS] Document public API object.
+- [CHORE] Update dependencies, including babel 7
+
+## 0.9.4
+- [BUFIX] Fix 0.9.3 in versions of ember-cli >= 3.5
+
+## 0.9.3
+- [BUGFIX] Fix broken dependency check under yarn workspaces.
+
+## 0.9.2
+- [BUGFIX] Fix testing of ember-power-calendar from within a whormole to the root of the body.
+
+## 0.9.1
+- [BUGFIX] Prevent infinite loop rendering the days component
+
+## 0.9.0
+- [BREAKING] Now this addon requires the user to install either `ember-power-calendar-moment` or `ember-power-calendar-luxon`
+  to work. However, once installed it should either of those, it should behave the same (obviously you won't ve able to pass
+  moment object if you choose the luxon addon)
+
+## 0.8.1
+- [BUGFIX] Update minimum version of `ember-power-calendar-moment` to fix some bugs.
+
 ## 0.8.0
 - [CHORE] 🎉🎉**BIG CHANGE**🎉🎉 Now the utility functions don't live on this addon but on another addon
   named `ember-power-calendar-moment`, that for the time being is a runtime dependency so it shouldn't
