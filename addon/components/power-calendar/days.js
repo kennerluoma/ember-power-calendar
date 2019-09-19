@@ -35,14 +35,15 @@ const WEEK_DAYS = [
 
 export default Component.extend({
   layout,
+  tagName: 'table',
   focusedId: null,
   showDaysAround: true,
   classNames: ['ember-power-calendar-days'],
   weekdayFormat: 'short', // "min" | "short" | "long"
   powerCalendarService: inject('power-calendar'),
   attributeBindings: [
-    'data-power-calendar-id'
-  ],
+    'data-power-calendar-id', 'role'],
+  role: 'presentation',
 
   // CPs
   'data-power-calendar-id': computed.oneWay('calendar.uniqueId'),
@@ -186,6 +187,18 @@ export default Component.extend({
           if (day.isDisabled) {
             return;
           }
+        } else if (e.keyCode === 33) { // page up
+          if (event.ctrlKey) {
+            calendar.actions.moveCenter(1, 'year', calendar);
+            return;
+          }
+          calendar.actions.moveCenter(1, 'month', calendar);
+        } else if (e.keyCode === 34) { // page down
+          if (event.ctrlKey) {
+            calendar.actions.moveCenter(-1, 'year', calendar);
+            return;
+          }
+          calendar.actions.moveCenter(1, 'month', calendar);
         } else {
           return;
         }

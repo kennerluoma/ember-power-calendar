@@ -1,15 +1,57 @@
 <nav class="ember-power-calendar-nav">
-  {{#if calendar.actions.changeCenter}}
-    <button type="button" class="ember-power-calendar-nav-control ember-power-calendar-nav-control--previous" onclick={{action calendar.actions.moveCenter -1 unit calendar}}>«</button>
-  {{/if}}
-  <div class="ember-power-calendar-nav-title">
-    {{#if hasBlock}}
-      {{yield calendar}}
-    {{else}}
-      {{power-calendar-format-date calendar.center format locale=calendar.locale}}
+  <div class="row">
+    {{#if calendar.actions.changeCenter}}
+      <button
+      title="Previous Year"
+      aria-label="Previous Year"
+      class="ember-power-calendar-nav-control ember-power-calendar-nav-control--previous"
+      onclick={{action calendar.actions.moveCenter -1 'year' calendar}}>
+        <span aria-hidden="true">«</span>
+      </button>
+    {{/if}}
+    <div class="ember-power-calendar-nav-title">
+      {{#if hasBlock}}
+        {{yield calendar}}
+      {{else}}
+        {{power-calendar-format-date calendar.center 'YYYY' locale=calendar.locale}}
+      {{/if}}
+    </div>
+    {{#if calendar.actions.changeCenter}}
+      <button
+        title="Next Year"
+        aria-label="Next Year"
+        class="ember-power-calendar-nav-control ember-power-calendar-nav-control--next"
+        onclick={{action calendar.actions.moveCenter 1 'year' calendar}}>
+        <span aria-hidden="true">»</span>
+      </button>
     {{/if}}
   </div>
-  {{#if calendar.actions.changeCenter}}
-    <button type="button" class="ember-power-calendar-nav-control ember-power-calendar-nav-control--next" onclick={{action calendar.actions.moveCenter 1 unit calendar}}>»</button>
-  {{/if}}
+
+  <div class="row">
+    {{#if calendar.actions.changeCenter}}
+      <button
+      title="Previous Month"
+      aria-label="Previous Month"
+      class="ember-power-calendar-nav-control ember-power-calendar-nav-control--previous"
+      onclick={{action calendar.actions.moveCenter -1 'month' calendar}}>
+        <span aria-hidden="true">«</span>
+      </button>
+    {{/if}}
+    <div class="ember-power-calendar-nav-title">
+      {{#if hasBlock}}
+        {{yield calendar}}
+      {{else}}
+        {{power-calendar-format-date calendar.center 'MMMM' locale=calendar.locale}}
+      {{/if}}
+    </div>
+    {{#if calendar.actions.changeCenter}}
+      <button
+        title="Next Month"
+         aria-label="Next Month"
+         class="ember-power-calendar-nav-control ember-power-calendar-nav-control--next"
+         onclick={{action calendar.actions.moveCenter 1 'month' calendar}}>
+        <span aria-hidden="true">»</span>
+      </button>
+    {{/if}}
+  </div>
 </nav>

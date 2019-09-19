@@ -14,6 +14,10 @@ export default Component.extend({
   layout,
   classNames: ['ember-power-calendar'],
   powerCalendarService: inject('power-calendar'),
+  attributeBindings: ['role', 'helptext'],
+  role: 'application',
+  helptext:
+    'Press the arrow keys to navigate by day, PageUp and PageDown to navigate by month, Alt+PageUp and Alt+PageDown to navigate by year, or Escape to cancel.',
   navComponent: 'power-calendar/nav',
   daysComponent: 'power-calendar/days',
   center: null,

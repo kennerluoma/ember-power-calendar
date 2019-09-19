@@ -224,3 +224,9 @@
     color: $day-other-month-text-color--hover;
   }
 }
+
+.ember-power-calendar-nav .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}

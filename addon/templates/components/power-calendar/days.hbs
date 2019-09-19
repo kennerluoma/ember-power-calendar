@@ -1,16 +1,21 @@
-<div class="ember-power-calendar-row ember-power-calendar-weekdays">
-  {{#each weekdaysNames as |wdn|}}
-    <div class="ember-power-calendar-weekday">{{wdn}}</div>
-  {{/each}}
-</div>
+<thead role="presentation" class="ember-power-calendar-row ember-power-calendar-weekdays">
+  <tr role="presentation">
+    {{#each weekdaysNames as |wdn|}}
+      <th role="presentation" class="ember-power-calendar-weekday">{{wdn}}</th>
+    {{/each}}
+  </tr>
+</thead>
 {{! template-lint-disable invalid-interactive }}
-<div class="ember-power-calendar-day-grid" onkeydown={{action "onKeyDown" calendar}}>
+<tbody role="presentation" class="ember-power-calendar-day-grid" onkeydown={{action "onKeyDown" calendar}}>
   {{#each weeks key='id' as |week|}}
-    <div class="ember-power-calendar-row ember-power-calendar-week" data-missing-days={{week.missingDays}}>
+    <tr role="presentation" class="ember-power-calendar-row ember-power-calendar-week" data-missing-days={{week.missingDays}}>
       {{#each week.days key='id' as |day|}}
-        <button type="button"
+        <td class={{ember-power-calendar-day-classes day calendar weeks dayClass}}
+          role="link"
+          label="{{day.id}}"
+          aria-current={{if day.isSelected 'date'}}
           data-date="{{day.id}}"
-          class={{ember-power-calendar-day-classes day calendar weeks dayClass}}
+          onclick={{action calendar.actions.select day calendar}}
           onfocus={{action 'onFocusDay' day}}
           onblur={{action 'onBlurDay'}}
           disabled={{day.isDisabled}}>
@@ -19,8 +24,8 @@
           {{else}}
             {{day.number}}
           {{/if}}
-        </button>
+        </td>
       {{/each}}
-    </div>
+    </tr>
   {{/each}}
-</div>
+</tbody>
