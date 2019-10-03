@@ -10,6 +10,10 @@ import { assert } from '@ember/debug';
 export default Component.extend({
   layout,
   classNames: ['ember-power-calendar'],
+  attributeBindings: ['role', 'helptext'],
+  role: 'application',
+  helptext:
+    'Press the arrow keys to navigate by day, PageUp and PageDown to navigate by month, Alt+PageUp and Alt+PageDown to navigate by year, or Escape to cancel.',
   powerCalendarService: inject('power-calendar'),
   momentService: inject('moment'),
   navComponent: 'power-calendar/nav',
@@ -20,7 +24,11 @@ export default Component.extend({
   init() {
     this._super(...arguments);
     let changeCenter = (newCenter, calendar, e) => {
-      return this.get('changeCenterTask').perform(moment(newCenter), calendar, e);
+      return this.get('changeCenterTask').perform(
+        moment(newCenter),
+        calendar,
+        e
+      );
     };
     this.publicActions = {
       changeCenter,
@@ -28,7 +36,7 @@ export default Component.extend({
         let newCenter = moment(this.get('currentCenter')).add(step, unit);
         return changeCenter(newCenter, calendar, e);
       },
-      select: (...args) => this.send('select', ...args)
+      select: (...args) => this.send('select', ...args),
     };
     this.registerCalendar();
     let onInit = this.get('onInit');
@@ -48,23 +56,35 @@ export default Component.extend({
     if (center) {
       return moment(center);
     }
-    return moment(this.get('selected') || this.get('powerCalendarService').getDate());
+    return moment(
+      this.get('selected') || this.get('powerCalendarService').getDate()
+    );
   }),
 
   publicAPI: computed('_publicAPI', function() {
     return this.get('_publicAPI');
   }),
 
-  _publicAPI: computed('selected', 'currentCenter', 'locale', 'momentService.locale', 'changeCenterTask.isRunning', function() {
-    return {
-      uniqueId: guidFor(this),
-      selected: this.get('selected'),
-      loading: this.get('changeCenterTask.isRunning'),
-      center: this.get('currentCenter'),
-      locale: this.get('locale') || this.get('momentService.locale') || moment.locale(),
-      actions: this.get('publicActions')
-    };
-  }),
+  _publicAPI: computed(
+    'selected',
+    'currentCenter',
+    'locale',
+    'momentService.locale',
+    'changeCenterTask.isRunning',
+    function() {
+      return {
+        uniqueId: guidFor(this),
+        selected: this.get('selected'),
+        loading: this.get('changeCenterTask.isRunning'),
+        center: this.get('currentCenter'),
+        locale:
+          this.get('locale') ||
+          this.get('momentService.locale') ||
+          moment.locale(),
+        actions: this.get('publicActions'),
+      };
+    }
+  ),
 
   // Actions
   actions: {
@@ -73,13 +93,16 @@ export default Component.extend({
       if (action) {
         action(day, calendar, e);
       }
-    }
+    },
   },
 
   // Tasks
-  changeCenterTask: task(function* (newCenterMoment, calendar, e) {
+  changeCenterTask: task(function*(newCenterMoment, calendar, e) {
     let action = this.get('onCenterChange');
-    assert('You attempted to move the center of a calendar that doesn\'t receive an `onCenterChange` action.', typeof action === 'function');
+    assert(
+      "You attempted to move the center of a calendar that doesn't receive an `onCenterChange` action.",
+      typeof action === 'function'
+    );
     let value = { date: newCenterMoment.toDate(), moment: newCenterMoment };
     yield action(value, calendar, e);
   }),
@@ -96,5 +119,5 @@ export default Component.extend({
     if (window) {
       delete window.__powerCalendars[guidFor(this)];
     }
-  }
+  },
 });
