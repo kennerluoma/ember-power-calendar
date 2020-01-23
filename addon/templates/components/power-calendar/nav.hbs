@@ -13,7 +13,7 @@
       {{#if hasBlock}}
         {{yield calendar}}
       {{else}}
-      {{moment-format calendar.center 'YYYY' locale=calendar.locale}}
+        {{moment-format calendar.center 'YYYY' locale=calendar.locale}}
       {{/if}}
     </div>
     {{#if calendar.actions.changeCenter}}
