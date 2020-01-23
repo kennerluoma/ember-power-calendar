@@ -30,7 +30,9 @@ export default CalendarComponent.extend({
     if (center) {
       return moment(center);
     }
-    return moment(this.get('selected.start') || this.get('powerCalendarService').getDate());
+    return moment(
+      this.get('selected.start') || this.get('powerCalendarService').getDate()
+    );
   }),
 
   minRangeDuration: computed('minRange', function() {
@@ -41,10 +43,18 @@ export default CalendarComponent.extend({
     return parseDuration(this.get('maxRange'));
   }),
 
-  publicAPI: computed('_publicAPI', 'minRangeDuration', 'maxRangeDuration', function() {
-    let rangeOnlyAPI = { minRange: this.get('minRangeDuration'), maxRange: this.get('maxRangeDuration') };
-    return assign(rangeOnlyAPI, this.get('_publicAPI'));
-  }),
+  publicAPI: computed(
+    '_publicAPI',
+    'minRangeDuration',
+    'maxRangeDuration',
+    function() {
+      let rangeOnlyAPI = {
+        minRange: this.get('minRangeDuration'),
+        maxRange: this.get('maxRangeDuration'),
+      };
+      return assign(rangeOnlyAPI, this.get('_publicAPI'));
+    }
+  ),
 
   // Actions
   actions: {
@@ -54,15 +64,25 @@ export default CalendarComponent.extend({
       if (start && end) {
         let { minRange, maxRange } = this.get('publicAPI');
         let diff = Math.abs(end.diff(start));
-        if (diff < minRange.as('ms') || maxRange && diff > maxRange.as('ms')) {
+        if (
+          diff < minRange.as('ms') ||
+          (maxRange && diff > maxRange.as('ms'))
+        ) {
           return;
         }
       }
       let action = this.get('onSelect');
+
       if (action) {
-        action(range, calendar, e);
+        if (e.type === 'keydown') {
+          if (e.keyCode === 32 || e.keyCode === 13) {
+            action(day, calendar, e);
+          }
+        } else {
+          action(range, calendar, e);
+        }
       }
-    }
+    },
   },
 
   // Methods
@@ -81,18 +101,26 @@ export default CalendarComponent.extend({
     if (start && end) {
       let startMoment = moment(start);
       let endMoment = moment(end);
-      let changeStart = Math.abs(day.moment.diff(endMoment)) > Math.abs(day.moment.diff(startMoment));
+      let changeStart =
+        Math.abs(day.moment.diff(endMoment)) >
+        Math.abs(day.moment.diff(startMoment));
 
       return {
-        moment: { start: changeStart ? day.moment : startMoment, end: changeStart ? endMoment : day.moment },
-        date: { start: changeStart ? day.date : startMoment.toDate(), end: changeStart ? endMoment.toDate() : day.date }
+        moment: {
+          start: changeStart ? day.moment : startMoment,
+          end: changeStart ? endMoment : day.moment,
+        },
+        date: {
+          start: changeStart ? day.date : startMoment.toDate(),
+          end: changeStart ? endMoment.toDate() : day.date,
+        },
       };
     }
 
     if (day.moment.isBefore(moment(start))) {
       return {
         moment: { start: day.moment, end: null },
-        date: { start: day.date, end: null }
+        date: { start: day.date, end: null },
       };
     }
 
@@ -105,19 +133,19 @@ export default CalendarComponent.extend({
       if (startMoment.isAfter(day.moment)) {
         return {
           moment: { start: day.moment, end: startMoment },
-          date: { start: day.date, end: startMoment.toDate() }
+          date: { start: day.date, end: startMoment.toDate() },
         };
       }
 
       return {
         moment: { start: startMoment, end: day.moment },
-        date: { start: startMoment.toDate(), end: day.date }
+        date: { start: startMoment.toDate(), end: day.date },
       };
     }
 
     return {
       moment: { start: day.moment, end: null },
-      date: { start: day.date, end: null }
+      date: { start: day.date, end: null },
     };
-  }
+  },
 });
