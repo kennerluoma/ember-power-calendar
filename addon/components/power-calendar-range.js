@@ -76,7 +76,8 @@ export default CalendarComponent.extend({
       if (action) {
         if (e.type === 'keydown') {
           if (e.keyCode === 32 || e.keyCode === 13) {
-            action(day, calendar, e);
+            action(range, calendar, e);
+            e.preventDefault();
           }
         } else {
           action(range, calendar, e);

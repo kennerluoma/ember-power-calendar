@@ -96,6 +96,7 @@ export default Component.extend({
         if (e.type === 'keydown') {
           if (e.keyCode === 32 || e.keyCode === 13) {
             action(day, calendar, e);
+            e.preventDefault();
           }
         } else {
           action(day, calendar, e);
