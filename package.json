@@ -80,5 +80,9 @@
   },
   "ember-addon": {
     "configPath": "tests/dummy/config"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "es5"
   }
 }

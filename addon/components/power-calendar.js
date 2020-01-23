@@ -90,8 +90,16 @@ export default Component.extend({
   actions: {
     select(day, calendar, e) {
       let action = this.get('onSelect');
+
+      // do action on click, space, or enter key
       if (action) {
-        action(day, calendar, e);
+        if (e.type === 'keydown') {
+          if (e.keyCode === 32 || e.keyCode === 13) {
+            action(day, calendar, e);
+          }
+        } else {
+          action(day, calendar, e);
+        }
       }
     },
   },

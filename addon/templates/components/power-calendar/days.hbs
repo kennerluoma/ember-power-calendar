@@ -6,7 +6,7 @@
   </tr>
 </thead>
 {{! template-lint-disable invalid-interactive }}
-<tbody role="presentation" class="ember-power-calendar-day-grid" onkeydown={{action "onKeyDown" calendar}}>
+<tbody role="presentation" aria-label="use arrow keys to select date" class="ember-power-calendar-day-grid" onkeydown={{action "onKeyDown" calendar}} tabindex="0">
   {{#each weeks key='id' as |week|}}
     <tr role="presentation" class="ember-power-calendar-row ember-power-calendar-week" data-missing-days={{week.missingDays}}>
       {{#each week.days key='id' as |day|}}
@@ -16,9 +16,11 @@
           aria-current={{if day.isSelected 'date'}}
           data-date="{{day.id}}"
           onclick={{action calendar.actions.select day calendar}}
+          onkeydown={{action calendar.actions.select day calendar}}
           onfocus={{action 'onFocusDay' day}}
           onblur={{action 'onBlurDay'}}
-          disabled={{day.isDisabled}}>
+          disabled={{day.isDisabled}}
+          tabindex="-1">
           {{#if hasBlock}}
             {{yield day publicAPI}}
           {{else}}

@@ -137,9 +137,14 @@ export default Component.extend({
     },
 
     onKeyDown(calendar, e) {
+      if (e.keyCode === 9) {
+        this.set('focusedId', null);
+        return;
+      }
+
+      let days = this.get('days');
       let focusedId = this.get('focusedId');
       if (focusedId) {
-        let days = this.get('days');
         let day, index;
         for (let i = 0; i < days.length; i++) {
           if (days[i].id === focusedId) {
@@ -200,6 +205,20 @@ export default Component.extend({
         }
         this.set('focusedId', day.id);
         scheduleOnce('afterRender', this, '_focusDate', day.id);
+      } else {
+        // set to today or first item
+        let [day] =
+          days.filter(d => d.isSelected) || days.filter(d => d.isToday);
+        if (day) {
+          this.set('focusedId', day.id);
+        } else {
+          const qs = this.element.querySelector.bind(this.element);
+          const firstDayOfMonth =
+            qs('td.ember-power-calendar-day--selected') ||
+            qs('td.ember-power-calendar-day--today') ||
+            qs('td.ember-power-calendar-day--current-month');
+          if (firstDayOfMonth) firstDayOfMonth.focus();
+        }
       }
     },
   },
