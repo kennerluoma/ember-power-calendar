@@ -33,6 +33,7 @@ export default Component.extend({
     this.publicActions = {
       changeCenter,
       moveCenter: (step, unit, calendar, e) => {
+        e.preventDefault();
         let newCenter = moment(this.get('currentCenter')).add(step, unit);
         return changeCenter(newCenter, calendar, e);
       },
